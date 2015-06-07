@@ -68,9 +68,9 @@ public class Agent {
         
         RavensFigure optionA=figures.get("A");
         RavensFigure optinoB=figures.get("B");
-        HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("B"));
+        HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("C"));
         //HashMap<String,String> transformation2=findTransformation(figures.get("A"),figures.get("C"));
-        HashMap<String,String> probableSolution=applyTransformation(figures.get("C"),transformation1);
+        HashMap<String,String> probableSolution=applyTransformation(figures.get("B"),transformation1);
         
         String numRegex="^\\d+$";
         int ansRating=0;
@@ -124,12 +124,11 @@ public class Agent {
             HashMap<String,String> attributesofB=valuesOfB.get(typesOfValuesB.toArray()[i]).getAttributes();
 
             Set<String> attributesofANames=attributesofA.keySet();
-            System.out.println(attributesofANames);
+            
             for(String a: attributesofANames){
                 if((attributesofA.get(a)!=null)&&(attributesofB.get(a)!=null))
-                    if(a.equalsIgnoreCase("inside")){
-                        System.out.println("Yes inside");
-                        System.out.println(valuesOfA.get(attributesofA.get(a)).getAttributes().get("shape"));
+                    if((a.equalsIgnoreCase("inside"))||(a.equalsIgnoreCase("above"))){
+                        
                         if(i>0)
                             transformation.put(a+i,identifyTransformation(a,attributesofA.get("shape")+"-"+valuesOfA.get(attributesofA.get(a)).getAttributes().get("shape"),attributesofB.get("shape")+"-"+valuesOfB.get(attributesofB.get(a)).getAttributes().get("shape")));
                         else
@@ -192,22 +191,23 @@ public class Agent {
             HashMap<String,String> attributesofC=valuesOfC.get(typesOfValuesC.toArray()[i]).getAttributes();
             Set<String> attributesofCNames=attributesofC.keySet();
             for(String a: attributesofCNames){
+                
                 if((attributesofC.get(a)!=null)&&(transformation.get(a+((i>0)?i:""))!=null)){
                     if(a.equalsIgnoreCase("angle")){
                         probableSolution.put(a+((i>0)?i:""),String.valueOf(Integer.parseInt(attributesofC.get(a))-Integer.parseInt(transformation.get(a))));
 
                      }else if(a.equalsIgnoreCase("shape")){
-                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                        if(transformation.get(a+((i>0)?i:"")).equalsIgnoreCase("nochange")){
                             probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
                          }else{
 
-                            if(transformation.get(a).split(",")[0].equalsIgnoreCase(attributesofC.get(a))){
+                            if(transformation.get(a+((i>0)?i:"")).split(",")[0].equalsIgnoreCase(attributesofC.get(a))){
                                  probableSolution.put(a+((i>0)?i:""),transformation.get(a).split(",")[1]);
                             }
                          }
 
                      }else if(a.equalsIgnoreCase("alignment")){
-                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                        if(transformation.get(a+((i>0)?i:"")).equalsIgnoreCase("nochange")){
                             probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
                          }else{
                             probableSolution.put(a+((i>0)?i:""),findtheAlignment(transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
@@ -215,18 +215,18 @@ public class Agent {
                          }
 
                      }else if(a.equalsIgnoreCase("fill")){
-                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                        if(transformation.get(a+((i>0)?i:"")).equalsIgnoreCase("nochange")){
                             probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
                          }else{
                             probableSolution.put(a+((i>0)?i:""),findtheFill(transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
                             
                          }
 
-                     }else if(a.equalsIgnoreCase("inside")){
-                        if(transformation.get(a).equalsIgnoreCase("nochange")){
-                            probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
+                     }else if((a.equalsIgnoreCase("inside"))||(a.equalsIgnoreCase("above"))){
+                        if(transformation.get(a+((i>0)?i:"")).equalsIgnoreCase("nochange")){
+                            probableSolution.put(a+((i>0)?i:""),valuesOfC.get(attributesofC.get(a)).getAttributes().get("shape"));    
                          }else{
-                            probableSolution.put(a+((i>0)?i:""),findtheInside(valuesOfC,transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
+                            probableSolution.put(a+((i>0)?i:""),findtheInside(C,transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
                             
                          }
 
@@ -263,11 +263,18 @@ public class Agent {
             for(String a: attributesofOptionNames){
 
                 if((attributesofOption.get(a)!=null)&&(probableSolution.get(a+((i>0)?i:""))!=null)){
-                    System.out.println(a+" #### "+probableSolution.get(a+((i>0)?i:""))+" ----> "+attributesofOption.get(a));
-                    if(probableSolution.get(a+((i>0)?i:"")).equalsIgnoreCase(attributesofOption.get(a))){
+                    // System.out.println(a+" #### "+probableSolution.get(a+((i>0)?i:""))+" ----> "+attributesofOption.get(a));
+                    if((a.equalsIgnoreCase("inside"))||(a.equalsIgnoreCase("above"))){
+                        if(probableSolution.get(a+((i>0)?i:"")).equalsIgnoreCase(valueOfOption.get(attributesofOption.get(a)).getAttributes().get("shape"))){
+                            tempRating++;
+                        }          
+                    }else{
+                        if(probableSolution.get(a+((i>0)?i:"")).equalsIgnoreCase(attributesofOption.get(a))){
                         //System.out.println(a);
-                        tempRating++;
+                            tempRating++;
+                        }    
                     }
+                    
                  }   
 
             }
@@ -329,9 +336,12 @@ public class Agent {
         return outputAlignment;
     }
 
-    public String   findtheInside(RavensFigure C,String attribute1,String attribute2,String attribute3){
-
-        
+    public String findtheInside(RavensFigure C,String attribute1,String attribute2,String attribute3){
+        System.out.println("Inside...");
+        System.out.println(attribute1);
+        System.out.println(attribute2);
+        System.out.println(attribute3);
+        return "";
     }
 
     public String findtheFill(String attribute1,String attribute2,String attribute3){
