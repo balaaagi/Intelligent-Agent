@@ -71,13 +71,18 @@ public class Agent {
         HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("B"));
         //HashMap<String,String> transformation2=findTransformation(figures.get("A"),figures.get("C"));
         HashMap<String,String> probableSolution=applyTransformation(figures.get("C"),transformation1);
+        
         String numRegex="^\\d+$";
         int ansRating=0;
         String ansOption="-1";
         for(String figureName: figuresNames){
+            
+
             if(figureName.matches(numRegex)){
+                
                 RavensFigure option =figures.get(figureName);
                 int thisOptionRating=compareProbables(probableSolution,option);
+                
                 if(thisOptionRating>ansRating){
                     ansRating=thisOptionRating;
                     ansOption=figureName;
@@ -88,7 +93,9 @@ public class Agent {
         
 
         }
+        System.out.println("Answer from Agent : "+ansOption);
         if(ansRating>9){
+            
             return Integer.parseInt(ansOption);
         }else
             return -1;
@@ -97,7 +104,7 @@ public class Agent {
     }
 
     public HashMap<String,String> findTransformation(RavensFigure A, RavensFigure B){
-        System.out.println("Inside transformation-------");
+        
         
         HashMap<String,RavensObject> valuesOfA=A.getObjects();
         HashMap<String,RavensObject> valuesOfB=B.getObjects();
@@ -105,33 +112,74 @@ public class Agent {
         Set<String> typesOfValuesA=valuesOfA.keySet();
         Set<String> typesOfValuesB=valuesOfB.keySet();
         int noOfKeys=typesOfValuesA.size();
-        System.out.println(noOfKeys+"&&&&");
+        
+        // if(noOfKeys>2){
+        //     for(int i=0;i<noOfKeys;i++){
 
-        for(int i=0;i<noOfKeys;i++){
-            System.out.println(typesOfValuesA.toArray()[i]);
+        //     }
+        // }else{
+            for(int i=0;i<noOfKeys;i++){
+            
             HashMap<String,String> attributesofA=valuesOfA.get(typesOfValuesA.toArray()[i]).getAttributes();
             HashMap<String,String> attributesofB=valuesOfB.get(typesOfValuesB.toArray()[i]).getAttributes();
 
             Set<String> attributesofANames=attributesofA.keySet();
+            System.out.println(attributesofANames);
             for(String a: attributesofANames){
-                System.out.println(a+"****");
-                transformation.put(a,identifyTransformation(a,attributesofA.get(a),attributesofB.get(a)));
+                if((attributesofA.get(a)!=null)&&(attributesofB.get(a)!=null))
+                    if(a.equalsIgnoreCase("inside")){
+                        System.out.println("Yes inside");
+                        System.out.println(valuesOfA.get(attributesofA.get(a)).getAttributes().get("shape"));
+                        if(i>0)
+                            transformation.put(a+i,identifyTransformation(a,attributesofA.get("shape")+"-"+valuesOfA.get(attributesofA.get(a)).getAttributes().get("shape"),attributesofB.get("shape")+"-"+valuesOfB.get(attributesofB.get(a)).getAttributes().get("shape")));
+                        else
+                            transformation.put(a,identifyTransformation(a,attributesofA.get("shape")+"-"+valuesOfA.get(attributesofA.get(a)).getAttributes().get("shape"),attributesofB.get("shape")+"-"+valuesOfB.get(attributesofB.get(a)).getAttributes().get("shape")));
+                    }else{
+                        if(i>0)
+                            transformation.put(a+i,identifyTransformation(a,attributesofA.get(a),attributesofB.get(a)));
+                        else
+                            transformation.put(a,identifyTransformation(a,attributesofA.get(a),attributesofB.get(a)));    
+                    }
+                    
                         
-            }
+                }
             
-        }
+            }    
+        // }
         
         
-        System.out.println("Ends transformation-------");
-        System.out.println(transformation);
+        
+        
+        System.out.println("Transformation :  "+transformation);
         return transformation;
     }
 
     public String identifyTransformation(String attributeName,String attributeValue1,String attributeValue2){
-        if(attributeValue1.equalsIgnoreCase(attributeValue2))
-            return "nochange";
-        else
-            return "";
+        if(attributeName.equalsIgnoreCase("angle")){
+            return String.valueOf(Math.abs(Integer.parseInt(attributeValue1)-Integer.parseInt(attributeValue2)));
+
+        }else if(attributeName.equalsIgnoreCase("shape")){
+            if(attributeValue1.equalsIgnoreCase(attributeValue2))
+                return "nochange";
+            else
+                return attributeValue1+","+attributeValue2;
+        }else if(attributeName.equalsIgnoreCase("alignment")){
+            if(attributeValue1.equalsIgnoreCase(attributeValue2))
+                return "nochange";
+            else
+                return attributeValue1+","+attributeValue2;
+        }else if(attributeName.equalsIgnoreCase("fill")){
+            if(attributeValue1.equalsIgnoreCase(attributeValue2))
+                return "nochange";
+            else
+                return attributeValue1+","+attributeValue2;
+        }else{
+            if(attributeValue1.equalsIgnoreCase(attributeValue2))
+                return "nochange";
+            else
+                return attributeValue1+","+attributeValue2;    
+        }
+        
     }
 
     public HashMap<String,String> applyTransformation(RavensFigure C,HashMap<String,String> transformation){
@@ -139,14 +187,63 @@ public class Agent {
         HashMap<String,RavensObject> valuesOfC=C.getObjects();
         Set<String> typesOfValuesC=valuesOfC.keySet();
         int noOfKeys=typesOfValuesC.size();
+        
         for(int i=0;i<noOfKeys;i++){
             HashMap<String,String> attributesofC=valuesOfC.get(typesOfValuesC.toArray()[i]).getAttributes();
             Set<String> attributesofCNames=attributesofC.keySet();
             for(String a: attributesofCNames){
-                if(transformation.get(a).equalsIgnoreCase("nochange"))
-                    probableSolution.put(a,attributesofC.get(a));
+                if((attributesofC.get(a)!=null)&&(transformation.get(a+((i>0)?i:""))!=null)){
+                    if(a.equalsIgnoreCase("angle")){
+                        probableSolution.put(a+((i>0)?i:""),String.valueOf(Integer.parseInt(attributesofC.get(a))-Integer.parseInt(transformation.get(a))));
+
+                     }else if(a.equalsIgnoreCase("shape")){
+                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                            probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
+                         }else{
+
+                            if(transformation.get(a).split(",")[0].equalsIgnoreCase(attributesofC.get(a))){
+                                 probableSolution.put(a+((i>0)?i:""),transformation.get(a).split(",")[1]);
+                            }
+                         }
+
+                     }else if(a.equalsIgnoreCase("alignment")){
+                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                            probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
+                         }else{
+                            probableSolution.put(a+((i>0)?i:""),findtheAlignment(transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
+                            
+                         }
+
+                     }else if(a.equalsIgnoreCase("fill")){
+                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                            probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
+                         }else{
+                            probableSolution.put(a+((i>0)?i:""),findtheFill(transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
+                            
+                         }
+
+                     }else if(a.equalsIgnoreCase("inside")){
+                        if(transformation.get(a).equalsIgnoreCase("nochange")){
+                            probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));    
+                         }else{
+                            probableSolution.put(a+((i>0)?i:""),findtheInside(valuesOfC,transformation.get(a+((i>0)?i:"")).split(",")[0],transformation.get(a+((i>0)?i:"")).split(",")[1],attributesofC.get(a)));
+                            
+                         }
+
+                     }else{
+                        if(transformation.get(a+((i>0)?i:"")).equalsIgnoreCase("nochange")){
+                        
+                            probableSolution.put(a+((i>0)?i:""),attributesofC.get(a));
+                        }    
+
+                    }
+                
+                }
+                
+                    
             }
         }
+        System.out.println("Probable Solution:  "+probableSolution);
         return probableSolution;
     }
 
@@ -155,18 +252,98 @@ public class Agent {
         HashMap<String,RavensObject> valueOfOption=option.getObjects();
         Set<String> typesOfValuesOption=valueOfOption.keySet();
         int noOfKeys=typesOfValuesOption.size();
+        int totalnoOfAttributes=0;
+        
         for(int i=0;i<noOfKeys;i++){
             HashMap<String,String> attributesofOption=valueOfOption.get(typesOfValuesOption.toArray()[i]).getAttributes();
             Set<String> attributesofOptionNames=attributesofOption.keySet();
             noOfAttributes=attributesofOptionNames.size();
+            totalnoOfAttributes=totalnoOfAttributes+noOfAttributes;
+            System.out.println(attributesofOption);
             for(String a: attributesofOptionNames){
-                if(probableSolution.get(a).equalsIgnoreCase(attributesofOption.get(a)))
-                    tempRating++;
+
+                if((attributesofOption.get(a)!=null)&&(probableSolution.get(a+((i>0)?i:""))!=null)){
+                    System.out.println(a+" #### "+probableSolution.get(a+((i>0)?i:""))+" ----> "+attributesofOption.get(a));
+                    if(probableSolution.get(a+((i>0)?i:"")).equalsIgnoreCase(attributesofOption.get(a))){
+                        //System.out.println(a);
+                        tempRating++;
+                    }
+                 }   
 
             }
         }
-        return (tempRating/noOfAttributes)*10;
+        System.out.println((tempRating));
+        System.out.println(totalnoOfAttributes);
+        return (tempRating/totalnoOfAttributes)*10;
 
+    }
+
+    public String findtheAlignment(String attribute1, String attribute2,String attribute3){
+        String[] attribute1Array=attribute1.split("-");
+        String[] attribute2Array=attribute2.split("-");
+        String[] attribute3Array=attribute3.split("-");
+        HashMap<String,String> alignmentLearning=new HashMap<>();
+        String outputAlignment="";
+
+        for (int i=0;i<attribute1Array.length; i++ ) {
+            if(attribute1Array[i].equalsIgnoreCase("bottom")){
+                if(attribute1Array[i].equalsIgnoreCase(attribute2Array[i])){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("top","top");
+                }else if(attribute2Array[i].equalsIgnoreCase("top")){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("top","bottom");
+                }
+            }else if(attribute1Array[i].equalsIgnoreCase("top")){
+                if(attribute1Array[i].equalsIgnoreCase(attribute2Array[i])){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("bottom","bottom");
+                }else if(attribute2Array[i].equalsIgnoreCase("bottom")){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("bottom","top");
+                }
+            }else if(attribute1Array[i].equalsIgnoreCase("right")){
+                if(attribute1Array[i].equalsIgnoreCase(attribute2Array[i])){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("left","left");
+                }else if(attribute2Array[i].equalsIgnoreCase("left")){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("left","right");
+                }
+            }else if(attribute1Array[i].equalsIgnoreCase("left")){
+                if(attribute1Array[i].equalsIgnoreCase(attribute2Array[i])){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("right","right");
+                }else if(attribute2Array[i].equalsIgnoreCase("right")){
+                    alignmentLearning.put(attribute1Array[i],attribute2Array[i]);
+                    alignmentLearning.put("right","left");
+                }
+            }
+            
+        }
+
+        for(int j=0;j<attribute3Array.length;j++){
+            outputAlignment=outputAlignment+((j>0)?"-":"")+alignmentLearning.get(attribute3Array[j]);
+        }
+
+        return outputAlignment;
+    }
+
+    public String   findtheInside(RavensFigure C,String attribute1,String attribute2,String attribute3){
+
+        
+    }
+
+    public String findtheFill(String attribute1,String attribute2,String attribute3){
+        if(attribute1.equalsIgnoreCase(attribute3)){
+            return attribute2;
+
+        }else{
+            if(attribute2.equalsIgnoreCase("no"))
+                return "yes";
+            else
+                return "no";
+        }
     }
 
     public String testFunction(String message){
