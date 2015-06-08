@@ -60,17 +60,18 @@ public class Agent {
      */
     public int Solve(RavensProblem problem) {
         System.out.println(problem.getName());
-        HashMap<String, RavensFigure> figures=new HashMap<>();
+
+        if(problem.hasVerbal()){
+                HashMap<String, RavensFigure> figures=new HashMap<>();
         figures=problem.getFigures();
         
         Set<String> figuresNames=figures.keySet();
 
         
-        RavensFigure optionA=figures.get("A");
-        RavensFigure optinoB=figures.get("B");
-        HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("C"));
+
+        HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("B"));
         //HashMap<String,String> transformation2=findTransformation(figures.get("A"),figures.get("C"));
-        HashMap<String,String> probableSolution=applyTransformation(figures.get("B"),transformation1);
+        HashMap<String,String> probableSolution=applyTransformation(figures.get("C"),transformation1);
         
         String numRegex="^\\d+$";
         int ansRating=0;
@@ -93,12 +94,16 @@ public class Agent {
         
 
         }
-        System.out.println("Answer from Agent : "+ansOption);
+        
         if(ansRating>9){
-            
+        System.out.println("Answer from Agent : "+ansOption);    
             return Integer.parseInt(ansOption);
         }else
             return -1;
+        }else{
+            return -1;
+        }
+        
 
         
     }
@@ -113,11 +118,7 @@ public class Agent {
         Set<String> typesOfValuesB=valuesOfB.keySet();
         int noOfKeys=typesOfValuesA.size();
         
-        // if(noOfKeys>2){
-        //     for(int i=0;i<noOfKeys;i++){
 
-        //     }
-        // }else{
             for(int i=0;i<noOfKeys;i++){
             
             HashMap<String,String> attributesofA=valuesOfA.get(typesOfValuesA.toArray()[i]).getAttributes();
@@ -144,7 +145,7 @@ public class Agent {
                 }
             
             }    
-        // }
+
         
         
         
@@ -259,7 +260,7 @@ public class Agent {
             Set<String> attributesofOptionNames=attributesofOption.keySet();
             noOfAttributes=attributesofOptionNames.size();
             totalnoOfAttributes=totalnoOfAttributes+noOfAttributes;
-            System.out.println(attributesofOption);
+            
             for(String a: attributesofOptionNames){
 
                 if((attributesofOption.get(a)!=null)&&(probableSolution.get(a+((i>0)?i:""))!=null)){
@@ -279,8 +280,7 @@ public class Agent {
 
             }
         }
-        System.out.println((tempRating));
-        System.out.println(totalnoOfAttributes);
+        
         return (tempRating/totalnoOfAttributes)*10;
 
     }
@@ -337,11 +337,22 @@ public class Agent {
     }
 
     public String findtheInside(RavensFigure C,String attribute1,String attribute2,String attribute3){
-        System.out.println("Inside...");
-        System.out.println(attribute1);
-        System.out.println(attribute2);
-        System.out.println(attribute3);
-        return "";
+        
+        HashMap<String,RavensObject> valueOfC=C.getObjects();
+        String suggestedFigureOption="";
+        
+        String suggestedFigure="";
+        if(attribute3.equalsIgnoreCase(attribute2))
+            suggestedFigure=attribute1;
+        else
+            suggestedFigure=attribute2;
+        Set<String> typesofCValues=valueOfC.keySet();
+        for(String a: typesofCValues){
+            if((valueOfC.get(a).getAttributes().get("shape")).equalsIgnoreCase(suggestedFigure))
+                suggestedFigureOption=a;
+        }
+
+        return suggestedFigureOption;
     }
 
     public String findtheFill(String attribute1,String attribute2,String attribute3){
