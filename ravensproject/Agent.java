@@ -133,12 +133,23 @@ public class Agent {
             return -1;
         }
         }else{
+            //3x3
+
             return -1;
+        
+            
         }
         
         
 
         
+    }
+
+    public HashMap<String,String> findHorizontalDiff(HashMap<String,String> t1,HashMap<String,String> t2){
+        HashMap<String,String> horizontalDiff=new HashMap<>();
+        Set<String> valuesOft1=t1.keySet();
+        int noOfKeys=valuesOft1.size();
+        return horizontalDiff;
     }
 
     public HashMap<String,String> findTransformation(RavensFigure A, RavensFigure B){
