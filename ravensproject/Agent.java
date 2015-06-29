@@ -195,7 +195,9 @@ public class Agent {
                 
                 if((attributesofC.get(a)!=null)&&(transformation.get(a+((i>0)?i:""))!=null)){
                     if(a.equalsIgnoreCase("angle")){
-                        probableSolution.put(a+((i>0)?i:""),String.valueOf(Integer.parseInt(attributesofC.get(a))-Integer.parseInt(transformation.get(a))));
+                        
+                        probableSolution.put(a+((i>0)?i:""),String.valueOf(Integer.parseInt(attributesofC.get(a))-Integer.parseInt(transformation.get(a+((i>0)?i:"")))));
+                        
 
                      }else if(a.equalsIgnoreCase("shape")){
                         if(transformation.get(a+((i>0)?i:"")).equalsIgnoreCase("nochange")){
@@ -254,8 +256,8 @@ public class Agent {
         Set<String> typesOfValuesOption=valueOfOption.keySet();
         int noOfKeys=typesOfValuesOption.size();
         int totalnoOfAttributes=0;
-        
-        for(int i=0;i<noOfKeys;i++){
+        System.out.println("----------");
+        for(int i=noOfKeys-1;i>=0;i--){
             HashMap<String,String> attributesofOption=valueOfOption.get(typesOfValuesOption.toArray()[i]).getAttributes();
             Set<String> attributesofOptionNames=attributesofOption.keySet();
             noOfAttributes=attributesofOptionNames.size();
@@ -263,14 +265,16 @@ public class Agent {
             
             for(String a: attributesofOptionNames){
 
-                if((attributesofOption.get(a)!=null)&&(probableSolution.get(a+((i>0)?i:""))!=null)){
+                System.out.println(i);
+                System.out.println(a+" :"+attributesofOption.get(a)+" "+probableSolution.get(a+(((noOfKeys-(i+1))>0)?(noOfKeys-(i+1)):"")));
+                if((attributesofOption.get(a)!=null)&&(probableSolution.get(a+(((noOfKeys-(i+1))>0)?(noOfKeys-(i+1)):""))!=null)){
                     // System.out.println(a+" #### "+probableSolution.get(a+((i>0)?i:""))+" ----> "+attributesofOption.get(a));
                     if((a.equalsIgnoreCase("inside"))||(a.equalsIgnoreCase("above"))){
-                        if(probableSolution.get(a+((i>0)?i:"")).equalsIgnoreCase(valueOfOption.get(attributesofOption.get(a)).getAttributes().get("shape"))){
+                        if(probableSolution.get(a+(((noOfKeys-(i+1))>0)?(noOfKeys-(i+1)):"")).equalsIgnoreCase(valueOfOption.get(attributesofOption.get(a)).getAttributes().get("shape"))){
                             tempRating++;
                         }          
                     }else{
-                        if(probableSolution.get(a+((i>0)?i:"")).equalsIgnoreCase(attributesofOption.get(a))){
+                        if(probableSolution.get(a+(((noOfKeys-(i+1))>0)?(noOfKeys-(i+1)):"")).equalsIgnoreCase(attributesofOption.get(a))){
                         //System.out.println(a);
                             tempRating++;
                         }    
@@ -280,7 +284,7 @@ public class Agent {
 
             }
         }
-        
+        System.out.println(option.getName()+" "+(tempRating/totalnoOfAttributes)*10);
         return (tempRating/totalnoOfAttributes)*10;
 
     }
