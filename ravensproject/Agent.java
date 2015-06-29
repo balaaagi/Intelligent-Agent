@@ -70,9 +70,9 @@ public class Agent {
         
 
         HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("B"));
-        //HashMap<String,String> transformation2=findTransformation(figures.get("A"),figures.get("C"));
-        HashMap<String,String> probableSolution=applyTransformation(figures.get("C"),transformation1);
-        
+        HashMap<String,String> transformation2=findTransformation(figures.get("A"),figures.get("C"));
+        HashMap<String,String> probableSolution1=applyTransformation(figures.get("C"),transformation1);
+        HashMap<String,String> probableSolution2=applyTransformation(figures.get("B"),transformation2);
         String numRegex="^\\d+$";
         int ansRating=0;
         String ansOption="-1";
@@ -82,7 +82,7 @@ public class Agent {
             if(figureName.matches(numRegex)){
                 
                 RavensFigure option =figures.get(figureName);
-                int thisOptionRating=compareProbables(probableSolution,option);
+                int thisOptionRating=compareProbables(probableSolution1,option);
                 
                 if(thisOptionRating>ansRating){
                     ansRating=thisOptionRating;
@@ -98,8 +98,37 @@ public class Agent {
         if(ansRating>9){
         System.out.println("Answer from Agent : "+ansOption);    
             return Integer.parseInt(ansOption);
-        }else
-            return -1;
+        }else{
+                String numRegex1="^\\d+$";
+                int ansRating1=0;
+                String ansOption1="-1";
+                for(String figureName: figuresNames){
+                    
+
+                    if(figureName.matches(numRegex1)){
+                        
+                        RavensFigure option =figures.get(figureName);
+                        int thisOptionRating=compareProbables(probableSolution2,option);
+                        
+                        if(thisOptionRating>ansRating){
+                            ansRating1=thisOptionRating;
+                            ansOption1=figureName;
+                        }
+
+
+                    }
+                
+
+                }
+             if(ansRating1>9){
+               System.out.println("Answer from Agent : "+ansOption1);    
+                return Integer.parseInt(ansOption1);
+             }else{
+                return -1;
+             }   
+
+        }
+            
         }else{
             return -1;
         }
@@ -256,7 +285,7 @@ public class Agent {
         Set<String> typesOfValuesOption=valueOfOption.keySet();
         int noOfKeys=typesOfValuesOption.size();
         int totalnoOfAttributes=0;
-        System.out.println("----------");
+        
         for(int i=noOfKeys-1;i>=0;i--){
             HashMap<String,String> attributesofOption=valueOfOption.get(typesOfValuesOption.toArray()[i]).getAttributes();
             Set<String> attributesofOptionNames=attributesofOption.keySet();
@@ -265,8 +294,7 @@ public class Agent {
             
             for(String a: attributesofOptionNames){
 
-                System.out.println(i);
-                System.out.println(a+" :"+attributesofOption.get(a)+" "+probableSolution.get(a+(((noOfKeys-(i+1))>0)?(noOfKeys-(i+1)):"")));
+                
                 if((attributesofOption.get(a)!=null)&&(probableSolution.get(a+(((noOfKeys-(i+1))>0)?(noOfKeys-(i+1)):""))!=null)){
                     // System.out.println(a+" #### "+probableSolution.get(a+((i>0)?i:""))+" ----> "+attributesofOption.get(a));
                     if((a.equalsIgnoreCase("inside"))||(a.equalsIgnoreCase("above"))){
@@ -284,7 +312,7 @@ public class Agent {
 
             }
         }
-        System.out.println(option.getName()+" "+(tempRating/totalnoOfAttributes)*10);
+        
         return (tempRating/totalnoOfAttributes)*10;
 
     }
