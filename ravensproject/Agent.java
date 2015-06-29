@@ -60,14 +60,14 @@ public class Agent {
      */
     public int Solve(RavensProblem problem) {
         System.out.println(problem.getName());
-
-        if(problem.hasVerbal()){
+        if(problem.getProblemType().equalsIgnoreCase("2x2")){
+            if(problem.hasVerbal()){
                 HashMap<String, RavensFigure> figures=new HashMap<>();
         figures=problem.getFigures();
         
         Set<String> figuresNames=figures.keySet();
 
-        
+        System.out.println(figures.size());
 
         HashMap<String,String> transformation1=findTransformation(figures.get("A"),figures.get("B"));
         HashMap<String,String> transformation2=findTransformation(figures.get("A"),figures.get("C"));
@@ -132,6 +132,10 @@ public class Agent {
         }else{
             return -1;
         }
+        }else{
+            return -1;
+        }
+        
         
 
         
@@ -146,7 +150,7 @@ public class Agent {
         Set<String> typesOfValuesA=valuesOfA.keySet();
         Set<String> typesOfValuesB=valuesOfB.keySet();
         int noOfKeys=typesOfValuesA.size();
-        
+        System.out.println(" 444sdf"+noOfKeys);
 
             for(int i=0;i<noOfKeys;i++){
             
@@ -164,10 +168,16 @@ public class Agent {
                         else
                             transformation.put(a,identifyTransformation(a,attributesofA.get("shape")+"-"+valuesOfA.get(attributesofA.get(a)).getAttributes().get("shape"),attributesofB.get("shape")+"-"+valuesOfB.get(attributesofB.get(a)).getAttributes().get("shape")));
                     }else{
-                        if(i>0)
+                        if(i>0){
+                            
                             transformation.put(a+i,identifyTransformation(a,attributesofA.get(a),attributesofB.get(a)));
-                        else
+                        }
+                            
+                        else{
+                            
                             transformation.put(a,identifyTransformation(a,attributesofA.get(a),attributesofB.get(a)));    
+                        }
+                            
                     }
                     
                         
