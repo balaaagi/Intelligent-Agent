@@ -207,13 +207,15 @@ return answer;
    Set<String> figureNames=problemInPixels.keySet();
    HashMap<String,Double> answers=new HashMap<String,Double>();
    HashMap<Integer,Integer> pixelsCyclic=new HashMap<Integer,Integer>();
+   int aPixels=problemInPixels.get("A");
+   int ePixels=problemInPixels.get("E");
    for(String figureName:figureNames){
      Integer optionPixels=problemInPixels.get(figureName);
 
       if(figureName.matches(numRegex)){
 
       }else{
-
+     // System.out.println("Option "+ figureName+"Pixel "+optionPixels);
         if(pixelsCyclic.containsKey(optionPixels)){
 
            int newValue=pixelsCyclic.get(optionPixels);
@@ -236,41 +238,54 @@ return answer;
     }
   }
 
+// System.out.println(expectedAnswerPixels);
   if(expectedAnswerPixels!=-1){
+    double diagonalNearest1=(Math.abs(aPixels-expectedAnswerPixels))/(double)((aPixels>expectedAnswerPixels)?expectedAnswerPixels:aPixels)*100;
+    double diagonalNearest2=(Math.abs(ePixels-expectedAnswerPixels))/(double)((ePixels>expectedAnswerPixels)?expectedAnswerPixels:ePixels)*100;
+   
+    
     for (String optionName : figureNames) {
 
       if(optionName.matches(numRegex)){
 
-
-        double accuracyPercentage=(Math.abs(problemInPixels.get(optionName)-expectedAnswerPixels)/
-        (double)((expectedAnswerPixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):expectedAnswerPixels));
-
-
-
-        if(problemInPixels.get(optionName)==expectedAnswerPixels){
-          theAnswer=optionName;
-          break;
+        if((diagonalNearest1>0.5)||(diagonalNearest2>0.5)){
+            double accuracyPercentage=(Math.abs(aPixels-problemInPixels.get(optionName)))/(double)((aPixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):aPixels);
+            if(accuracyPercentage<0.01)
+              answers.put(optionName,accuracyPercentage);
         }else{
-          if(accuracyPercentage<0.5)
-            answers.put(optionName,accuracyPercentage);
+              double accuracyPercentage=(Math.abs(problemInPixels.get(optionName)-expectedAnswerPixels)/
+              (double)((expectedAnswerPixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):expectedAnswerPixels));
 
-        }
-      }
-      if(theAnswer.equalsIgnoreCase("")){
-          Set<String> accuracyOptions=answers.keySet();
-          double nearestAccuracy=0.5;
 
-          for(String s: accuracyOptions){
-            if(answers.get(s)<nearestAccuracy){
-                nearestAccuracy=answers.get(s);
-                theAnswer=s;
+            
+              if(problemInPixels.get(optionName)==expectedAnswerPixels){
+                theAnswer=optionName;
+                break;
+              }else{
+                if(accuracyPercentage<0.5)
+                  answers.put(optionName,accuracyPercentage);
+
+              }
+           } 
+            if(theAnswer.equalsIgnoreCase("")){
+                Set<String> accuracyOptions=answers.keySet();
+                double nearestAccuracy=0.5;
+
+                for(String s: accuracyOptions){
+                  if(answers.get(s)<nearestAccuracy){
+                      nearestAccuracy=answers.get(s);
+                      theAnswer=s;
+                  }
+                }
+
+
             }
-          }
+        
 
-
-      }
+        
     }
   }
+}
   return theAnswer;
  }
 
