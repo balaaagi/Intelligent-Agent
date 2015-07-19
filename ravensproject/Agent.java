@@ -120,7 +120,11 @@ public class Agent {
   String deTransition=findTransistion(problemInPixels.get("D"),problemInPixels.get("E"));
   String efTransition=findTransistion(problemInPixels.get("E"),problemInPixels.get("F"));
   String ghTransition=findTransistion(problemInPixels.get("G"),problemInPixels.get("H"));
-
+  System.out.println(abTransition);
+  System.out.println(bcTransition);
+  System.out.println(deTransition);
+  System.out.println(efTransition);
+  System.out.println(ghTransition);
 
   if((abTransition==bcTransition)&&(deTransition==efTransition)){
       transformation.put("pixelChange","no-change");
@@ -142,7 +146,7 @@ public class Agent {
 
  public String findTransistion(int a, int b){
    String transition="";
-if((a==b))
+  if((a==b))
     transition="no-change";
 
   if((a>b))
@@ -209,13 +213,15 @@ return answer;
    HashMap<Integer,Integer> pixelsCyclic=new HashMap<Integer,Integer>();
    int aPixels=problemInPixels.get("A");
    int ePixels=problemInPixels.get("E");
+   int cPixels=problemInPixels.get("C");
+   int gPixels=problemInPixels.get("G");
    for(String figureName:figureNames){
      Integer optionPixels=problemInPixels.get(figureName);
 
       if(figureName.matches(numRegex)){
 
       }else{
-     // System.out.println("Option "+ figureName+"Pixel "+optionPixels);
+       System.out.println("Option "+ figureName+"Pixel "+optionPixels);
         if(pixelsCyclic.containsKey(optionPixels)){
 
            int newValue=pixelsCyclic.get(optionPixels);
@@ -237,22 +243,48 @@ return answer;
       break;
     }
   }
-
-// System.out.println(expectedAnswerPixels);
+boolean diagonalPercentageTrack=false;
+System.out.println(expectedAnswerPixels);
   if(expectedAnswerPixels!=-1){
     double diagonalNearest1=(Math.abs(aPixels-expectedAnswerPixels))/(double)((aPixels>expectedAnswerPixels)?expectedAnswerPixels:aPixels)*100;
     double diagonalNearest2=(Math.abs(ePixels-expectedAnswerPixels))/(double)((ePixels>expectedAnswerPixels)?expectedAnswerPixels:ePixels)*100;
-   
-    
+    double diagonalPercentage1=(Math.abs(aPixels-ePixels))/(double)((aPixels>ePixels)?ePixels:aPixels);
+    double diagonalPercentage2=(Math.abs(cPixels-ePixels))/(double)((cPixels>ePixels)?ePixels:cPixels);
+    double diagonalPercentage3=(Math.abs(gPixels-ePixels))/(double)((gPixels>ePixels)?ePixels:gPixels);
+    System.out.println(diagonalNearest1);
+    System.out.println(diagonalNearest2);
+    System.out.println(diagonalPercentage1);
+    System.out.println(diagonalPercentage2);
+    System.out.println(diagonalPercentage3);
+    double nearestAccuracyStrengthMap=0.0;
+    double nearestAccuracy=0.5;
     for (String optionName : figureNames) {
 
       if(optionName.matches(numRegex)){
 
         if((diagonalNearest1>0.5)||(diagonalNearest2>0.5)){
-            double accuracyPercentage=(Math.abs(aPixels-problemInPixels.get(optionName)))/(double)((aPixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):aPixels);
-            if(accuracyPercentage<0.01)
-              answers.put(optionName,accuracyPercentage);
+          
+            double accuracyPercentage=(Math.abs(ePixels-problemInPixels.get(optionName)))/(double)((ePixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):ePixels);
+            double ansDiagonalCompareAccuracy=(Math.abs(accuracyPercentage-diagonalPercentage1))/(double)((diagonalPercentage1>accuracyPercentage)?accuracyPercentage:diagonalPercentage1);
+
+            System.out.println("option "+optionName+" Pixel Values "+problemInPixels.get(optionName)+" "+accuracyPercentage+ "Answer Accyracy"+ansDiagonalCompareAccuracy );
+            if(ansDiagonalCompareAccuracy==0.0){
+              theAnswer=optionName;
+            }else if(ansDiagonalCompareAccuracy<1){
+              System.out.println("Coming in Pixel Strength Mapping");
+              if(ansDiagonalCompareAccuracy>nearestAccuracyStrengthMap){
+                  nearestAccuracyStrengthMap=ansDiagonalCompareAccuracy;
+                  theAnswer=optionName;
+              }
+
+                
+              // answers.put(optionName,ansDiagonalCompareAccuracy);
+
+            }
+
+              
         }else{
+          System.out.println("Coming in Pixel Normal Flow");
               double accuracyPercentage=(Math.abs(problemInPixels.get(optionName)-expectedAnswerPixels)/
               (double)((expectedAnswerPixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):expectedAnswerPixels));
 
@@ -262,24 +294,30 @@ return answer;
                 theAnswer=optionName;
                 break;
               }else{
-                if(accuracyPercentage<0.5)
+                if(accuracyPercentage<0.5){
+                  if(accuracyPercentage<nearestAccuracy){
+                    nearestAccuracy=accuracyPercentage;
+                    theAnswer=optionName;
+                  }
+                }
                   answers.put(optionName,accuracyPercentage);
 
               }
-           } 
-            if(theAnswer.equalsIgnoreCase("")){
-                Set<String> accuracyOptions=answers.keySet();
-                double nearestAccuracy=0.5;
+            
+            // if(theAnswer.equalsIgnoreCase("")){
+            //     Set<String> accuracyOptions=answers.keySet();
+                
 
-                for(String s: accuracyOptions){
-                  if(answers.get(s)<nearestAccuracy){
-                      nearestAccuracy=answers.get(s);
-                      theAnswer=s;
-                  }
-                }
+            //     for(String s: accuracyOptions){
+            //       if(answers.get(s)<nearestAccuracy){
+            //           nearestAccuracy=answers.get(s);
+            //           theAnswer=s;
+            //       }
+            //     }
 
 
-            }
+            // }
+          }
         
 
         
