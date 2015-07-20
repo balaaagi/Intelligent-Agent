@@ -385,28 +385,29 @@ return answer;
         if(((accuracyPercentageBADiff>0.9)&&(accuracyPercentageBADiff<=1.0))&&((accuracyPercentageEDDiff>0.9)&&(accuracyPercentageEDDiff<=1.0))){
          System.out.println("The problem is Horizontal Difference Reverese");
          pattern=5;
-        }else{
+        }
+        else{
           Integer[][] intersectAB=interesctTwoOptions(problemPixelMap.get("A"),problemPixelMap.get("B"));
           Integer[][] intersectDE=interesctTwoOptions(problemPixelMap.get("D"),problemPixelMap.get("E"));
           double accuracyPercentageABInter=compareObjects(intersectAB,problemPixelMap.get("C"));
           double accuracyPercentageDEInter=compareObjects(intersectDE,problemPixelMap.get("F"));
-          if(((accuracyPercentageABInter>0.9)&&(accuracyPercentageABInter<=1.0))&&((accuracyPercentageDEInter>0.9)&&(accuracyPercentageDEInter<=1.0))){
+          if(((accuracyPercentageABInter>0.99)&&(accuracyPercentageABInter<=1.0))&&((accuracyPercentageDEInter>0.99)&&(accuracyPercentageDEInter<=1.0))){
               System.out.println("The problem is Horizontal Intersection"); 
               pattern=6; 
             }
-          // }else{
-          //   Integer[][] intersectAD=interesctTwoOptions(problemPixelMap.get("A"),problemPixelMap.get("D"));
-          //   Integer[][] intersectBE=interesctTwoOptions(problemPixelMap.get("B"),problemPixelMap.get("E"));
-          //   double accuracyPercentageADInter=compareObjects(intersectAD,problemPixelMap.get("G"));
-          //   double accuracyPercentageBEInter=compareObjects(intersectBE,problemPixelMap.get("H"));
-          //   if(((accuracyPercentageADInter>0.9)&&(accuracyPercentageADInter<=1.0))&&((accuracyPercentageBEInter>0.9)&&(accuracyPercentageBEInter<=1.0))){
-          //     System.out.println("The problem is Vertical Intersection"); 
-          //     pattern=7; 
-          //   }
-          // }
+          else{
+            Integer[][] intersectAD=interesctTwoOptions(problemPixelMap.get("A"),problemPixelMap.get("D"));
+            Integer[][] intersectBE=interesctTwoOptions(problemPixelMap.get("B"),problemPixelMap.get("E"));
+            double accuracyPercentageADInter=compareObjects(intersectAD,problemPixelMap.get("G"));
+            double accuracyPercentageBEInter=compareObjects(intersectBE,problemPixelMap.get("H"));
+            if(((accuracyPercentageADInter>0.99)&&(accuracyPercentageADInter<=1.0))&&((accuracyPercentageBEInter>0.99)&&(accuracyPercentageBEInter<=1.0))){
+              System.out.println("The problem is Vertical Intersection"); 
+              pattern=7; 
+            }
+          
           
         }
-       
+       }
         }
 
       }
