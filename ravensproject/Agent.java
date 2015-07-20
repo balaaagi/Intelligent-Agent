@@ -147,15 +147,16 @@ public class Agent {
                 HashMap<String,Integer[][]> problemInPixelMap=findPixelMap(problemFigures);
                answer=Integer.parseInt(findtheAnswer(problemInPixels,problemTransformation,problemFigures,problemInPixelMap));
                 
-              System.out.println("Visual is avaialable");
+              System.out.println("Visual is available");
 
               }else{
-                System.out.println("No Visual Avaialable");
+                System.out.println("No Visual Available");
               }
 
             }catch(Exception e){
               e.printStackTrace();
             }
+            System.out.println("Answer from Agent : "+answer); 
             return answer;
         
             
@@ -198,11 +199,7 @@ public class Agent {
   String deTransition=findTransistion(problemInPixels.get("D"),problemInPixels.get("E"));
   String efTransition=findTransistion(problemInPixels.get("E"),problemInPixels.get("F"));
   String ghTransition=findTransistion(problemInPixels.get("G"),problemInPixels.get("H"));
-  System.out.println(abTransition);
-  System.out.println(bcTransition);
-  System.out.println(deTransition);
-  System.out.println(efTransition);
-  System.out.println(ghTransition);
+
 
   if((abTransition==bcTransition)&&(deTransition==efTransition)){
         transformation.put("pixelChange","no-change");
@@ -241,7 +238,7 @@ public class Agent {
    String theAnswer="";
    int typeOfProblem=-1;
    typeOfProblem=findProblemPattern(problemPixelMap);
-   System.out.println("Problem is of Type "+typeOfProblem);
+   
    if(transformation.get("pixelChange").equalsIgnoreCase("no-change")){
               System.out.println("This Problem is Constant");
               theAnswer=findAnswerConstant(problemInPixels.get("G"),problemInPixels);
@@ -327,7 +324,7 @@ return answer;
           if(probableAnswerAccuracyWithOption>answerAccuracy){
             answerAccuracy=probableAnswerAccuracyWithOption;
             theAnswer=optionName;
-            System.out.println("Option "+optionName+" Accuracy"+probableAnswerAccuracyWithOption);
+            
           }
           
     
@@ -347,8 +344,9 @@ return answer;
   double accuracyPercentageAB=compareObjects(mergeAB,problemPixelMap.get("C"));
   double accuracyPercentageDE=compareObjects(mergeDE,problemPixelMap.get("F"));
   if(((accuracyPercentageAB>0.99)&&(accuracyPercentageAB<=1.0))&&((accuracyPercentageDE>0.9)&&(accuracyPercentageDE<=1.0))){
+    System.out.println("This Problem is of type  Horizontal Sum ");
     pattern=1;
-    System.out.println("This Problem is Horizontal Sum with accuracy "+accuracyPercentageAB);
+    
   }else{
     Integer[][] mergeAD=mergeTwoOptions(problemPixelMap.get("A"),problemPixelMap.get("D"));
     Integer[][] mergeBE=mergeTwoOptions(problemPixelMap.get("B"),problemPixelMap.get("E"));
@@ -356,8 +354,9 @@ return answer;
     double accuracyPercentageBE=compareObjects(mergeBE,problemPixelMap.get("H"));
 
     if(((accuracyPercentageAD>0.99)&&(accuracyPercentageAD<=1.0))&&((accuracyPercentageBE>0.99)&&(accuracyPercentageBE<=1.0))){
+        System.out.println("The problem is vertical Sum");
       pattern=2;
-      System.out.println("This Problem is Vertical Sum with accuracy "+accuracyPercentageAB);
+      
     }
     else{
       Integer[][] diffAD=diffTwoOptions(problemPixelMap.get("A"),problemPixelMap.get("D"));
@@ -367,7 +366,7 @@ return answer;
 
       if(((accuracyPercentageADDiff>0.9)&&(accuracyPercentageADDiff<=1.0))&&((accuracyPercentageBEDiff>0.9)&&(accuracyPercentageBEDiff<=1.0))){
         System.out.println("The problem is vertical Difference");
-        System.out.println("Accuracy for Difference "+accuracyPercentageBEDiff);
+        
         pattern=3;  
       }else{
         Integer[][] diffAB=diffTwoOptions(problemPixelMap.get("A"),problemPixelMap.get("B"));
@@ -383,7 +382,7 @@ return answer;
         double accuracyPercentageBADiff=compareObjects(diffBA,problemPixelMap.get("G"));
         double accuracyPercentageEDDiff=compareObjects(diffED,problemPixelMap.get("H"));
         if(((accuracyPercentageBADiff>0.9)&&(accuracyPercentageBADiff<=1.0))&&((accuracyPercentageEDDiff>0.9)&&(accuracyPercentageEDDiff<=1.0))){
-         System.out.println("The problem is Horizontal Difference Reverese");
+         System.out.println("The problem is Horizontal Difference Reverse");
          pattern=5;
         }
         else{
@@ -403,6 +402,9 @@ return answer;
             if(((accuracyPercentageADInter>0.99)&&(accuracyPercentageADInter<=1.0))&&((accuracyPercentageBEInter>0.99)&&(accuracyPercentageBEInter<=1.0))){
               System.out.println("The problem is Vertical Intersection"); 
               pattern=7; 
+            }else{
+              System.out.println("The problem Pattern Cannot be found"); 
+              
             }
           
           
@@ -539,25 +541,7 @@ String numRegex="^\\d+$";
     Set<String> pixelMapOptions=problemPixelMap.keySet();
 
         Integer[][] columnWiseCommon=findCommonObject(problemPixelMap.get("G"),problemPixelMap.get("H"));
-        // for(int i=0;i<184;i++){
-        //   for(int j=0;j<184;j++){
-        //     if(columnWiseCommon[j][i]==0)
-        //       System.out.print(".");
-        //     else
-        //       System.out.print(" ");
-        //   }
-        //   System.out.println();
-        // }
         Integer[][] rowWiseCommon=findCommonObject(problemPixelMap.get("C"),problemPixelMap.get("F"));
-        // for(int i=0;i<184;i++){
-        //   for(int j=0;j<184;j++){
-        //     if(rowWiseCommon[j][i]==0)
-        //       System.out.print(".");
-        //     else
-        //       System.out.print(" ");
-        //   }
-        //   System.out.println();
-        // }
 
         Integer[][] merged=mergeTwoOptions(columnWiseCommon,rowWiseCommon);
 
@@ -576,7 +560,7 @@ String numRegex="^\\d+$";
         double nearestLowAccuracy=0.0;
         HashMap<String,Double> pixelCompare=new HashMap<String,Double>();
         HashMap<String,Double> expectCompare=new HashMap<String,Double>();
-        System.out.println(expectedPixelCount);
+        
         for(String optionName: optionNames){
           if(optionName.matches(numRegex)){
           int optionPixels=problemInPixels.get(optionName);
@@ -588,7 +572,7 @@ String numRegex="^\\d+$";
             Integer[][] optionCompare=findCommonObject(merged,problemPixelMap.get(optionName));
             double accuracyPercentage=compareObjects(merged,optionCompare);
             double accuracyPercentage2=(Math.abs(expectedPixelCount-optionPixels))/(double)((expectedPixelCount>optionPixels)?optionPixels:expectedPixelCount);
-            System.out.println("Option "+optionName+" PixelCount "+optionPixels+" Accuracy1 "+accuracyPercentage+" Accuracy2 "+accuracyPercentage2);     
+            // System.out.println("Option "+optionName+" PixelCount "+optionPixels+" Accuracy1 "+accuracyPercentage+" Accuracy2 "+accuracyPercentage2);     
             if(accuracyPercentage==nearestLowAccuracy){
               
                 nearestLowAccuracy=accuracyPercentage;
