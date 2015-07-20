@@ -70,11 +70,23 @@ public class Agent {
             HashMap<String, RavensFigure> problemFigures=problem.getFigures();
             HashMap<String,Integer> problemInPixels=findthePixels(problemFigures);
             HashMap<String,String> problemTransformation=findtheTransformation(problemInPixels);
-            answer=Integer.parseInt(findtheAnswer(problemInPixels,problemTransformation,problemFigures));
-            // Set<String> transformations=problemTransformation.keySet();
-            // for(String s: transformations){
-            //   System.out.println(s+"  "+problemTransformation.get(s));
+            HashMap<String,Integer[][]> problemInPixelMap=findPixelMap(problemFigures);
+            answer=Integer.parseInt(findtheAnswer(problemInPixels,problemTransformation,problemFigures,problemInPixelMap));
+            
+            // Set<String> problemInPixelMapoptions=problemInPixelMap.keySet();
+            // for(String option:problemInPixelMapoptions){
+              // Integer[][] thisoptionA=problemInPixelMap.get("7");
+              // for(int i=0;i<184;i++){
+              //   for(int j=0;j<184;j++){
+              //     if(thisoptionA[j][i]==0)
+              //       System.out.print(".");
+              //     else
+              //       System.out.print(" ");
+              //   }
+              //   System.out.println();
+              // }
             // }
+
            System.out.println("Visual is avaialable");
 
           }else{
@@ -120,11 +132,11 @@ public class Agent {
   String deTransition=findTransistion(problemInPixels.get("D"),problemInPixels.get("E"));
   String efTransition=findTransistion(problemInPixels.get("E"),problemInPixels.get("F"));
   String ghTransition=findTransistion(problemInPixels.get("G"),problemInPixels.get("H"));
-  System.out.println(abTransition);
-  System.out.println(bcTransition);
-  System.out.println(deTransition);
-  System.out.println(efTransition);
-  System.out.println(ghTransition);
+  // System.out.println(abTransition);
+  // System.out.println(bcTransition);
+  // System.out.println(deTransition);
+  // System.out.println(efTransition);
+  // System.out.println(ghTransition);
 
   if((abTransition==bcTransition)&&(deTransition==efTransition)){
       transformation.put("pixelChange","no-change");
@@ -135,6 +147,7 @@ public class Agent {
      transformation.put("pixelChange","column");
      transformation.put("transitionChange","column");
    }else{
+
      transformation.put("transitionChange","cyclic");
      transformation.put("pixelChange","cyclic");
    }
@@ -158,13 +171,14 @@ public class Agent {
     return transition;
  }
 
- public String findtheAnswer(HashMap<String,Integer> problemInPixels,HashMap<String,String> transformation,HashMap<String,RavensFigure> problemFigures ){
+ public String findtheAnswer(HashMap<String,Integer> problemInPixels,HashMap<String,String> transformation,HashMap<String,RavensFigure> problemFigures,HashMap<String,Integer[][]> problemPixelMap ){
    String theAnswer="";
    if(transformation.get("pixelChange").equalsIgnoreCase("no-change")){
+            System.out.println("This Problem is Costant");
               theAnswer=findAnswerConstant(problemInPixels.get("G"),problemInPixels);
    }else if(transformation.get("transitionChange").equalsIgnoreCase("column")){
             System.out.println("This Problem is Column Wise");
-              //theAnswer=findAnswerColumn(problemInPixels.get("G"));
+            theAnswer=findAnswerColumn(problemInPixels,problemFigures,problemPixelMap);
    }else{
           System.out.println("This Problem is Cyclic ");
           theAnswer=findAnswerCyclic(problemInPixels);
@@ -221,7 +235,7 @@ return answer;
       if(figureName.matches(numRegex)){
 
       }else{
-       System.out.println("Option "+ figureName+"Pixel "+optionPixels);
+       // System.out.println("Option "+ figureName+"Pixel "+optionPixels);
         if(pixelsCyclic.containsKey(optionPixels)){
 
            int newValue=pixelsCyclic.get(optionPixels);
@@ -244,18 +258,18 @@ return answer;
     }
   }
 boolean diagonalPercentageTrack=false;
-System.out.println(expectedAnswerPixels);
+// System.out.println(expectedAnswerPixels);
   if(expectedAnswerPixels!=-1){
     double diagonalNearest1=(Math.abs(aPixels-expectedAnswerPixels))/(double)((aPixels>expectedAnswerPixels)?expectedAnswerPixels:aPixels)*100;
     double diagonalNearest2=(Math.abs(ePixels-expectedAnswerPixels))/(double)((ePixels>expectedAnswerPixels)?expectedAnswerPixels:ePixels)*100;
     double diagonalPercentage1=(Math.abs(aPixels-ePixels))/(double)((aPixels>ePixels)?ePixels:aPixels);
     double diagonalPercentage2=(Math.abs(cPixels-ePixels))/(double)((cPixels>ePixels)?ePixels:cPixels);
     double diagonalPercentage3=(Math.abs(gPixels-ePixels))/(double)((gPixels>ePixels)?ePixels:gPixels);
-    System.out.println(diagonalNearest1);
-    System.out.println(diagonalNearest2);
-    System.out.println(diagonalPercentage1);
-    System.out.println(diagonalPercentage2);
-    System.out.println(diagonalPercentage3);
+    // System.out.println(diagonalNearest1);
+    // System.out.println(diagonalNearest2);
+    // System.out.println(diagonalPercentage1);
+    // System.out.println(diagonalPercentage2);
+    // System.out.println(diagonalPercentage3);
     double nearestAccuracyStrengthMap=0.0;
     double nearestAccuracy=0.5;
     for (String optionName : figureNames) {
@@ -267,15 +281,15 @@ System.out.println(expectedAnswerPixels);
             double accuracyPercentage=(Math.abs(ePixels-problemInPixels.get(optionName)))/(double)((ePixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):ePixels);
             double ansDiagonalCompareAccuracy=(Math.abs(accuracyPercentage-diagonalPercentage1))/(double)((diagonalPercentage1>accuracyPercentage)?accuracyPercentage:diagonalPercentage1);
 
-            System.out.println("option "+optionName+" Pixel Values "+problemInPixels.get(optionName)+" "+accuracyPercentage+ "Answer Accyracy"+ansDiagonalCompareAccuracy );
+            // System.out.println("option "+optionName+" Pixel Values "+problemInPixels.get(optionName)+" "+accuracyPercentage+ "Answer Accyracy"+ansDiagonalCompareAccuracy );
             if(ansDiagonalCompareAccuracy==0.0){
               theAnswer=optionName;
             }else if(ansDiagonalCompareAccuracy<1){
-              System.out.println("Coming in Pixel Strength Mapping");
+              // System.out.println("Coming in Pixel Strength Mapping");
               if(ansDiagonalCompareAccuracy>nearestAccuracyStrengthMap){
                   nearestAccuracyStrengthMap=ansDiagonalCompareAccuracy;
                   theAnswer=optionName;
-              }
+            }
 
                 
               // answers.put(optionName,ansDiagonalCompareAccuracy);
@@ -284,7 +298,7 @@ System.out.println(expectedAnswerPixels);
 
               
         }else{
-          System.out.println("Coming in Pixel Normal Flow");
+          // System.out.println("Coming in Pixel Normal Flow");
               double accuracyPercentage=(Math.abs(problemInPixels.get(optionName)-expectedAnswerPixels)/
               (double)((expectedAnswerPixels>problemInPixels.get(optionName))?problemInPixels.get(optionName):expectedAnswerPixels));
 
@@ -327,6 +341,159 @@ System.out.println(expectedAnswerPixels);
   return theAnswer;
  }
 
+public String findAnswerColumn(HashMap<String,Integer> problemInPixels,HashMap<String,RavensFigure> problemFigures, HashMap<String, Integer[][]> problemPixelMap){
+String theAnswer="";
+String numRegex="^\\d+$";
+    Set<String> pixelMapOptions=problemPixelMap.keySet();
+
+        Integer[][] columnWiseCommon=findCommonObject(problemPixelMap.get("G"),problemPixelMap.get("H"));
+        // for(int i=0;i<184;i++){
+        //   for(int j=0;j<184;j++){
+        //     if(columnWiseCommon[j][i]==0)
+        //       System.out.print(".");
+        //     else
+        //       System.out.print(" ");
+        //   }
+        //   System.out.println();
+        // }
+        Integer[][] rowWiseCommon=findCommonObject(problemPixelMap.get("C"),problemPixelMap.get("F"));
+        // for(int i=0;i<184;i++){
+        //   for(int j=0;j<184;j++){
+        //     if(rowWiseCommon[j][i]==0)
+        //       System.out.print(".");
+        //     else
+        //       System.out.print(" ");
+        //   }
+        //   System.out.println();
+        // }
+
+        Integer[][] merged=mergeTwoOptions(columnWiseCommon,rowWiseCommon);
+
+        int expectedPixelCount=0;
+        for(int i=0;i<184;i++){
+          for(int j=0;j<184;j++){
+            if(merged[j][i]!=0)
+                expectedPixelCount=expectedPixelCount+1;
+          }
+          
+        }
+
+        Set<String> optionNames=problemInPixels.keySet();
+        double firstColumn;
+        double nearestHighAccuracy=0.5;
+        double nearestLowAccuracy=0.0;
+        HashMap<String,Double> pixelCompare=new HashMap<String,Double>();
+        HashMap<String,Double> expectCompare=new HashMap<String,Double>();
+        System.out.println(expectedPixelCount);
+        for(String optionName: optionNames){
+          if(optionName.matches(numRegex)){
+          int optionPixels=problemInPixels.get(optionName);
+
+          if(expectedPixelCount==optionPixels){
+            theAnswer=optionName;
+            break;
+          }else{
+            Integer[][] optionCompare=findCommonObject(merged,problemPixelMap.get(optionName));
+            double accuracyPercentage=compareObjects(merged,optionCompare);
+            double accuracyPercentage2=(Math.abs(expectedPixelCount-optionPixels))/(double)((expectedPixelCount>optionPixels)?optionPixels:expectedPixelCount);
+            // System.out.println("Option "+optionName+" PixelCount "+optionPixels+" Accuracy1 "+accuracyPercentage+" Accuracy2 "+accuracyPercentage2);     
+            if(accuracyPercentage==nearestLowAccuracy){
+              
+                nearestLowAccuracy=accuracyPercentage;
+                pixelCompare.put(optionName,accuracyPercentage);
+                expectCompare.put(optionName,accuracyPercentage2);
+            }else if(accuracyPercentage>nearestLowAccuracy){
+              
+              nearestLowAccuracy=accuracyPercentage;
+              pixelCompare.put(optionName,accuracyPercentage);
+              expectCompare.clear();
+              expectCompare.put(optionName,accuracyPercentage2);
+            }
+
+          }  
+          }
+          
+
+        }
+        if(theAnswer.equalsIgnoreCase("")){
+
+
+          Set<String> options=expectCompare.keySet();
+            for(String option:options){
+              // System.out.println("Option coming is "+option+"Value"+expectCompare.get(option));
+              if(expectCompare.get(option)<nearestHighAccuracy){
+                nearestHighAccuracy=expectCompare.get(option);
+                theAnswer=option;
+              }
+            }
+        }
+
+      return theAnswer;
+
+}
+
+public double compareObjects(Integer[][] a,Integer[][] b){
+  double accuracyPercentage=0.0;
+  int pixelsEquals=0;
+  for(int i=0;i<184;i++){
+    for(int j=0;j<184;j++){
+      if(a[i][j]==b[i][j])
+        pixelsEquals=pixelsEquals+1;
+    }
+  }
+  accuracyPercentage=pixelsEquals/(double)(184*184);
+  return accuracyPercentage;
+}
+
+public Integer[][] mergeTwoOptions(Integer[][] a,Integer[][] b){
+  Integer[][] colCommonObject=new Integer[184][184];
+  for(int i=0;i<184;i++){
+    for(int j=0;j<184;j++){
+      colCommonObject[j][i]=a[j][i]|b[j][i];
+    }
+  }
+  return colCommonObject;
+}
+
+public Integer[][] findCommonObject(Integer[][] a,Integer[][] b){
+  Integer[][] commonObject=new Integer[184][184];
+  for(int i=0;i<184;i++){
+    for(int j=0;j<184;j++){
+      commonObject[j][i]=a[j][i]&b[j][i];
+    }
+  }
+  return commonObject;
+}
+
+public HashMap<String,Integer[][]> findPixelMap(HashMap<String,RavensFigure> problemFigures){
+    HashMap<String,Integer[][]> pixelMap=new HashMap<String,Integer[][]>();
+
+    Set<String> optionImageNames=problemFigures.keySet();
+    try{
+      for(String option: optionImageNames){
+        RavensFigure thisFigure=problemFigures.get(option);
+        Integer[][] thisOptionPixelMap=new Integer[184][184];
+        BufferedImage thisOptionImage=ImageIO.read(new File(thisFigure.getVisual()));
+        int pixelCount=0;
+        for(int i=0;i<thisOptionImage.getHeight();i++){
+          for(int j=0;j<thisOptionImage.getWidth();j++){
+              if(thisOptionImage.getRGB(i,j)== 0xFFFFFFFF){
+                thisOptionPixelMap[i][j]=0;
+              }else{
+                thisOptionPixelMap[i][j]=1;
+              }
+                
+          }
+        }
+        pixelMap.put(option,thisOptionPixelMap);
+      }
+    }catch(Exception e){
+                    e.printStackTrace();
+    }
+
+    return pixelMap;
+
+}
  public String compareAnswer(int a,HashMap<String,Integer> problemInPixels){
    String answer="";
    HashMap<String,Double> probans=new HashMap<String,Double>();
