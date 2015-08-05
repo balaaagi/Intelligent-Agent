@@ -27,6 +27,6 @@ Java and Library Provided by University for reading the input Problem formats
 | Basic Problems E     	| Visual      	| 9                         	| 12                       	|
 | Test Problems E      	| Visual      	| 5                         	| 12                       	|
 | Challenge Problems E 	| Visual      	| 2                         	| 12                       	|
-| Raven's Problem E    	| Visual      	| 7                         	|                          	|
+| Raven's Problem E    	| Visual      	| 7                         	| 12                         	|
 
 
